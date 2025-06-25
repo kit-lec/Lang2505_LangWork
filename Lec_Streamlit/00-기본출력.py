@@ -144,8 +144,57 @@ fig = barplot.get_figure()
 
 st.pyplot(fig)
 
+#############
+# matplotlib 의 gallery 에 많은 예제들 
+# https://matplotlib.org/stable/gallery/index.html
+# 
 
+# 그 중에 하나 예시를 가져와보자.
+# Stacked bar chart 
+# https://matplotlib.org/stable/gallery/lines_bars_and_markers/bar_stacked.html#sphx-glr-gallery-lines-bars-and-markers-bar-stacked-py
 
+species = (
+    "Adelie\n $\\mu=$3700.66g",
+    "Chinstrap\n $\\mu=$3733.09g",
+    "Gentoo\n $\\mu=5076.02g$",
+)
+weight_counts = {
+    "Below": np.array([70, 31, 58]),
+    "Above": np.array([82, 37, 66]),
+}
+width = 0.5
+
+fig, ax = plt.subplots()
+bottom = np.zeros(3)
+
+for boolean, weight_count in weight_counts.items():
+    p = ax.bar(species, weight_count, width, label=boolean, bottom=bottom)
+    bottom += weight_count
+
+ax.set_title("Number of penguins with above average body mass")
+ax.legend(loc="upper right")
+
+st.pyplot(fig)
+
+##### Barcode 생성예제
+# https://matplotlib.org/stable/gallery/images_contours_and_fields/barcode_demo.html
+
+code = np.array([
+    1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1,
+    0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0,
+    1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1,
+    1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1])
+
+pixel_per_bar = 4
+dpi = 100
+
+fig = plt.figure(figsize=(len(code) * pixel_per_bar / dpi, 2), dpi=dpi)
+ax = fig.add_axes([0, 0, 1, 1])  # span the whole figure
+ax.set_axis_off()
+ax.imshow(code.reshape(1, -1), cmap='binary', aspect='auto',
+          interpolation='nearest')
+
+st.pyplot(fig)
 
 
 
