@@ -93,3 +93,93 @@ st.write({
 }[mbti])
 
 
+options = st.multiselect( # -> List 리턴
+    label="당신이 좋아하는 과일은 무엇입니까?",
+    options=['망고', '오렌지', '사과', '바나나'],
+    default=['망고', '오렌지']
+)
+st.write(f'당신의 선택은: :red[{options}] 입니다')
+
+# ---------------------------------------------------
+# st.slider => tuple 혹은 특정 단일값
+# 슬라이더
+values = st.slider(  # -> tuple 리턴
+    label='범위의 값을 다음과 같이 지정할 수 있어요:sparkles:',
+    min_value=0.0,
+    max_value=100.0,
+    value=(25.0, 75.0)
+)
+st.write('선택 범위: ', values)
+
+from datetime import datetime as dt
+import datetime
+
+start_time = st.slider(
+    label="언제 약속을 잡는 것이 좋을까요?",
+    min_value=dt(2025, 1, 1, 0, 0),
+    max_value=dt(2025, 6, 25, 0, 0),
+    value=dt(2025, 3, 4, 12, 0),
+    step=datetime.timedelta(days=1),  # 한번 움직일때마다 움직이는 양.
+    format="MM/DD/YY - HH:mm")
+st.write("선택한 약속 시간:", start_time)
+
+
+number = st.number_input(  # -> int / float / None
+    label='나이를 입력해 주세요.',
+    min_value=10,
+    max_value=100,
+    value=30,
+    step=5,   # + / - 누를때마다 증감되는 값
+)
+st.write('당신이 입력하신 나이는: ', number)
+
+# ---------------------------------------------
+# 활용] 로또 번호 생성
+
+import random
+import datetime
+
+st.markdown('---')
+st.title(':sparkles:로또 생성기:sparkles:')
+
+def generate_lotto():
+    lotto = [i + 1 for i in range(45)]
+    random.shuffle(lotto)
+
+    return lotto[:6]
+
+button = st.button('로또를 생성해주세요')
+
+if button:
+    for i in range(1, 6):
+        st.subheader(f'{i}.행운의번호: :green[{generate_lotto()}]')
+
+# ----------------
+st.markdown('---')
+
+st.title('파입 업로드:sparkles:')
+
+file = st.file_uploader(
+    "파일 선택(csv or xlsx)",
+    type=['csv', 'xls', 'xlsx']
+)
+
+if file is not None:
+    ext = file.name.split('.')[-1]  # 확장자 
+    if ext == 'csv':
+        # 파일 읽기
+        df = pd.read_csv(file)
+        st.dataframe(df)
+
+
+
+
+
+
+
+
+
+
+
+
+
