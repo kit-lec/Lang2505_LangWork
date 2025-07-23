@@ -295,35 +295,12 @@ if not docs:
     """
     )
 else:
-    response = run_quiz_chain(docs, topic if topic else file.name)
-    # st.write(response) # 확인용
-
-    # form 작성
-    #  key=  페이지내의 form 식별자
-    with st.form(key="questions_form"):
-        for key, question in enumerate(response['questions']):
-            st.write(question['question'])
-            value = st.radio(label="Select an option",
-                     options=[answer['answer'] for answer in question['answers']],
-                     key=key, 
-                     index=None)  # 기본 체크제거
-            # st.write(value)  # 선택한 radio 값 확인
-            # st.success(value)  # alert 표시 *확인용*
-            # st.error(value)
-
-            # 정답 판정
-            # st.json(question['answers'])
-            # st.json({'answer': value, 'correct': True})
-
-            # st.write({'answer': value, 'correct': True} in question['answers'])
-
-            if {'answer': value, 'correct': True} in question['answers']:
-                st.success("Correct!")
-            elif value is not None:
-                st.error("Wrong!")
-
-        # form '안' 에 submit 버튼이 필요하다
-        button = st.form_submit_button()
+    start = st.button("Generate Quiz")
+    if start:        
+        # 두번째 매개변수에 hash 가능한 값 전달.
+        # topic 이 있는 경우 (wiki검색) topic 을.  아닌 경우 파일명을 사용!
+        response = run_quiz_chain(docs, topic if topic else file.name)
+        st.write(response) # 확인용
 
 
         

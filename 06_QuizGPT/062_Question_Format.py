@@ -19,21 +19,9 @@ from langchain_core.callbacks.streaming_stdout import StreamingStdOutCallbackHan
 
 from langchain_community.retrievers.wikipedia import WikipediaRetriever
 
-import json
-from langchain_core.output_parsers.base import BaseOutputParser
-
-
 # ────────────────────────────────────────
 # 🎃 LLM 로직
 # ────────────────────────────────────────
-
-class JsonOutputParser(BaseOutputParser):
-    def parse(self, text):
-        text = text.replace("```", "").replace("json", "")
-        return json.loads(text)
-    
-output_parser = JsonOutputParser()
-
 llm = ChatOpenAI(
     temperature=0.1,
     model='gpt-3.5-turbo-1106',
@@ -200,18 +188,7 @@ formatting_prompt = ChatPromptTemplate.from_messages([
 
 formmatting_chain = formatting_prompt | llm
 
-@st.cache_resource(show_spinner="Making quiz...")
-# streamlit 이 hash 하지 않도록 매개변수에 _로 시작
-# 대신 topic 이라는 매개변수가 변경되면 실행되도록 하자
-def run_quiz_chain(_docs, topic):
-    chain = {"context": question_chain} | formmatting_chain | output_parser
-    return chain.invoke(_docs)    
 
-@st.cache_resource(show_spinner="Searching Wikipedia")
-def wiki_search(topic):
-    retriever = WikipediaRetriever(top_k_results=5)
-    docs = retriever.invoke(topic)    
-    return docs
 
 
 # ────────────────────────────────────────
@@ -259,7 +236,6 @@ st.title("QuizGPT")
 
 with st.sidebar:
     docs = []
-    topic = None
 
     choice = st.selectbox(
         label="Choose what you want to use.",
@@ -280,7 +256,10 @@ with st.sidebar:
     else:
         topic = st.text_input("Search Wikipedia...")
         if topic:
-            docs = wiki_search(topic)
+            retriever = WikipediaRetriever(top_k_results=5)
+
+            with st.status("Searching Wikipedia..."):
+                docs = retriever.invoke(topic)
 
 
 if not docs:
@@ -295,38 +274,16 @@ if not docs:
     """
     )
 else:
-    response = run_quiz_chain(docs, topic if topic else file.name)
-    # st.write(response) # 확인용
+    start = st.button("Generate Quiz")
+    if start:
+        questions_response = question_chain.invoke(docs)   
+        st.write(questions_response.content)  # 확인용
 
-    # form 작성
-    #  key=  페이지내의 form 식별자
-    with st.form(key="questions_form"):
-        for key, question in enumerate(response['questions']):
-            st.write(question['question'])
-            value = st.radio(label="Select an option",
-                     options=[answer['answer'] for answer in question['answers']],
-                     key=key, 
-                     index=None)  # 기본 체크제거
-            # st.write(value)  # 선택한 radio 값 확인
-            # st.success(value)  # alert 표시 *확인용*
-            # st.error(value)
+        formatting_response = formmatting_chain.invoke({
+            "context": questions_response.content,
+        })
 
-            # 정답 판정
-            # st.json(question['answers'])
-            # st.json({'answer': value, 'correct': True})
-
-            # st.write({'answer': value, 'correct': True} in question['answers'])
-
-            if {'answer': value, 'correct': True} in question['answers']:
-                st.success("Correct!")
-            elif value is not None:
-                st.error("Wrong!")
-
-        # form '안' 에 submit 버튼이 필요하다
-        button = st.form_submit_button()
-
-
-        
+        st.write(formatting_response.content) # 확인용
 
 
 
