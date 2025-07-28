@@ -1,0 +1,20 @@
+영상으로부터 음성데이터 추출하기
+↓
+음성데이터로부터 녹취록 (transcript) 받기 (Whisper API 사용)
+↓
+녹취록으로부터 대화(음성데이터)의 '요약본(summary)' 을 받을수도 있고.
+↓
+대화의 내용에 대해 질문할수도 있다. (도전과제)
+
+- ffmpeg, pydub 설치및 활용
+- Refine document chain  체인 구현: 
+
+
+- 원본영상: https://youtu.be/CWvOKHNeLMI
+- 다운로드: https://www.dropbox.com/scl/fi/263cy8f27iqtczgf7xbyr/podcast.mp4?rlkey=dszdyejg8b0lgy8h53w25vat8&e=1&st=cvnwvvm5&dl=1
+
+
+- Whisper API : https://openai.com/index/whisper/
+-   priciong: https://platform.openai.com/docs/pricing
+
+- ffmpeg 설치 : https://ffmpeg.org/

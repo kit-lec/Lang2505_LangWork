@@ -6,19 +6,18 @@ load_dotenv()  #
 print(f'\tOPENAI_API_KEY={os.getenv("OPENAI_API_KEY")[:20]}')
 #─────────────────────────────────────────────────────────────────────────────────────────
 import streamlit as st
+from langchain_community.document_loaders.sitemap import SitemapLoader
 
-# Chromium 의 headless instance 를 사용하여 HTML 페이지를 스크레이핑
-from langchain_community.document_loaders.chromium import AsyncChromiumLoader
-from langchain_community.document_transformers.html2text import Html2TextTransformer
 
-import asyncio
+@st.cache_resource(show_spinner="Fetching URL...")
+def load_website(url):
+    loader = SitemapLoader(url)
+    loader.max_depth = 1  # 수업시간 한계상 depth=1  (기본값 10)
+    loader.requests_per_second = 1
+    loader.headers = {'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36'}
 
-# Windows 환경에서의 event loop policy 설정
-if hasattr(asyncio, "WindowsProactorEventLoopPolicy"):
-    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
-
-# HTML 을 받아서 Text 로 변환(transform) 해주는 객체
-html2text_transformer = Html2TextTransformer()
+    docs = loader.load()    
+    return docs
 
 # ────────────────────────────────────────
 # ⭕ Streamlit 로직
@@ -45,12 +44,12 @@ st.markdown(
 )
 
 if url:
-    loader = AsyncChromiumLoader(
-        urls=[url],
-        user_agent='Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36',
-    )
 
-    docs = loader.load()
-    # st.write(docs)
-    transformed = html2text_transformer.transform_documents(docs) # -> Sequence[Document] 리턴
-    st.write(transformed)
+    # 사용자가 URL 을 입력하면, 거기에 XML sitemap 이 포함되는지 확인할거다.
+    # 포함되지 않다면 error 를 보여줘서 application 의 출돌을 미리 방지하자.
+    if ".xml" not in url:
+        with st.sidebar:
+            st.error("Plaease write down a Sitemap URL")
+    else:
+        docs = load_website(url)
+        st.write(docs) # 확인용
