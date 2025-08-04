@@ -1,0 +1,20 @@
+Agent 사용 (Custom Agent, Custom Tool)
+
+DuckDuckgo search tool
+    # 회사 정보를 웹에서 찾는 툴을 만들거다.
+    # 회사가 상장했는지?  회사의 주식 심볼(ticker, 티커)는 무엇인지?  찾아보는 툴
+    # 가령 ex)  A 라는 회사에 대한 정보를 찾고자 한다면, agent 에 의해 툴은 A가 어떤 회사인지에 대한 검색을 수행하게 된다.  그럼 그 회사의 주식 심볼이 ex) "NET" 인걸 알게 될거다.  
+    # 위 동작은 다른 API 를 통해 다루어보게 될거다,  뉴스나 현금 흐름이나 주가 실적등 모든 것에 대해 찾아볼거다.
+
+AlphaVantaga API (주식회사정보)
+  https://www.alphavantage.co/   여기서 API 키 발급
+  환경변수 등록 ALPHA_VANTAGE_API_KEY=I7*************
+
+    회사 심볼을 알아내기 위한 툴
+    손익계산서를 위한 툴
+    뉴스 심리지수를 위한 툴
+    회사의 개요를 위한 툴
+
+
+SQLToolkit : LLM 이 Database 와 연동.
+
