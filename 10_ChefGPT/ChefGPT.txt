@@ -1,0 +1,36 @@
+Custom GPT 만들기
+    : GPT Action 을 사용
+    : 우리 로컬 DB에 있는 '레시피' 찾을수 있도록 하는 Custom GPT 를 구축해볼거다. 
+
+    : ★ChatGPT plus 구독 필요  $20/월 (2025.7 현재)
+
+작업(actions) 만들기
+    : 내 컴에 API 서버 구축하여 action 에 추가하기
+
+Custom GPT 와 로컬 Server 간 인증하는 방법
+  - API key 사용한 인증
+  - OAuth 사용한 인증.
+
+실습환경: 
+    내 컴에 API서버 구축 : FastAPI 사용
+        서버가동 => uvicorn main:app --reload
+
+        /docs  => API 문서 페이지 제공.
+        /openapi.json  => open api 표준 schema 제공.  <- GPT가 이를 본다!
+
+    CloudFlared 를 통해 터널링  
+    
+    ※ CloudFlared 설치 필요
+        Windows: winget install --id Cloudflare.cloudflared
+        맥OS: brew install cloudflared
+
+    터널링 명령
+        cloudflared tunnel --url http://127.0.0.1:8000
+
+
+Pinecone 벡터 스토어 사용하기
+    ★pinecone 회원가입
+    프로젝트 생성
+    ★api key 발급 필요
+    pinecone 에 임베딩하여 사용하기
+
